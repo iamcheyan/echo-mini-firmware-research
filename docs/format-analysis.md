@@ -16,7 +16,7 @@ All complete image binaries reside outside the repository in `~/.local/share/ech
 
 ## Scan and extraction attempts
 
-Tools available: `file` (Debian file utility; version not captured), GNU `strings` (version not captured), `xxd` (version not captured), `binwalk` 2.4.3 (Debian), `7z` 25.01, `unzip` (version not captured), `sha256sum` (coreutils version not captured), Python 3.13.5, Pillow, and Capstone. `arm-none-eabi-objdump` 2.44 is installed but has not been used for complete disassembly. `binwalk --version` is not supported by Debian's v2.4.3 CLI and printed a usage error; the version above was taken from `binwalk -h`.
+Tools and recorded versions: `file` 5.46, GNU `strings` 2.44, `xxd` 2024-12-07, `binwalk` 2.4.3 (Debian), `7z` 25.01, `unzip` 6.00, GNU `sha256sum` 9.5, Python 3.13.5, Capstone and Pillow (Python modules; exact module versions not captured), `arm-none-eabi-objdump` 2.44. The ARM disassembler is installed but has not been used for complete disassembly. `binwalk --version` is unsupported by Debian's v2.4.3 CLI and printed a usage error; the version was read from `binwalk -h`.
 
 Representative commands, run on the complete private image:
 
@@ -25,7 +25,9 @@ file "$IMAGE"
 sha256sum "$IMAGE"
 xxd -s 480 -l 256 "$IMAGE"
 strings -a -t d -n 8 "$IMAGE"
-# Whole-image byte counts, entropy, and marker offsets were computed with Python 3.13.
+# Entropy over the whole image and sampled ranges (Python 3.13).
+python3 -c 'import collections,math,sys; b=open(sys.argv[1],"rb").read(); ranges=[("all",b),("early",b[0x400:0x52000]),("mixed",b[0x52000:0x320000])]; [print(name,len(x),-sum((n/len(x))*math.log2(n/len(x)) for n in collections.Counter(x).values())) for name,x in ranges]' "$IMAGE"
+python3 -c 'import sys; b=open(sys.argv[1],"rb").read(); [(print(x, [i for i in range(len(b)) if b.startswith(x,i)][:20], "count", b.count(x))) for x in (b"RKnanoFW",b"JPGJPEBMP",b"RKnanoFWL",b"RKnano SDK 1.0",b".BMP")]' "$IMAGE"
 binwalk -B "$IMAGE"
 binwalk -e "$IMAGE"
 ```

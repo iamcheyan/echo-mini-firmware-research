@@ -16,6 +16,7 @@ Status: static research milestone, 2026-11-02. Physical device behavior has not 
 - [Artifact inventory](docs/artifact-inventory.md)
 - [Format and static analysis](docs/format-analysis.md)
 - [Platform and OTA correlation](docs/platform-ota.md)
+- [Per-image hashes](docs/image-hashes.md)
 - [Feasibility and next steps](docs/feasibility.md)
 
 Private ZIPs, images, and raw reports reside at `~/.local/share/echo-mini-firmware-research/`; they must not be staged or committed.
